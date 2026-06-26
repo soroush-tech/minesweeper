@@ -26,7 +26,7 @@ export const Board = () => {
   return (
     <div className="board">
       <div className="header">
-        <MinesCounter />
+        <MinesCounter board={board} />
         <ObserverFace board={data} changeBoard={changeBoard} />
         <TimerCounter start={data?.start} end={data?.end} />
       </div>

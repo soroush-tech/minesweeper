@@ -1,34 +1,42 @@
 import { useCallback, useState, FC, TouchEventHandler } from 'react'
 import { useBoardMutation } from '../../common/hooks/useBoardMutation'
 import { type Cell as CellT } from '../../utils/generateMinesweeperGrid'
+import { useFlagStore } from '../../common/store/useFlagStore'
 
 interface CellProps {
   cell: CellT
   position: { x: number; y: number }
+  boardId: string
 }
 
-export const Cell: FC<CellProps> = ({ cell: [value, isRevealed, isFlagged], position }) => {
+export const Cell: FC<CellProps> = ({ cell: [value, isRevealed], position, boardId }) => {
   const { mutate } = useBoardMutation()
   const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | undefined>(undefined)
 
-  const onclick = useCallback(
-    (hasRevealed = false, hasFlagged = false) => {
-      if (isRevealed || (isFlagged && isFlagged === hasFlagged)) {
-        return
-      }
-      mutate({
-        position: [position.x, position.y],
-        actions: [hasRevealed, hasFlagged],
-      })
-    },
-    [isRevealed, isFlagged, position, mutate],
-  )
+  const key = `${position.x}:${position.y}`
+  const flagState = useFlagStore((state) => state.boards[boardId]?.[key])
+  const cycleFlag = useFlagStore((state) => state.cycleFlag)
+
+  const reveal = useCallback(() => {
+    if (isRevealed || flagState === 'flag') {
+      return
+    }
+    mutate({
+      position: [position.x, position.y],
+      actions: [true, false],
+    })
+  }, [isRevealed, flagState, position, mutate])
+
+  const toggleFlag = useCallback(() => {
+    if (isRevealed) {
+      return
+    }
+    cycleFlag(boardId, key)
+  }, [isRevealed, cycleFlag, boardId, key])
 
   const handleTouchStart: TouchEventHandler<HTMLDivElement> = () => {
-    // Set a timer for the long press (right-click equivalent on mobile)
-    const timerId = setTimeout(() => {
-      onclick(isRevealed, !isFlagged)
-    }, 800) // Long press duration
+    // Long press is the right-click equivalent on mobile.
+    const timerId = setTimeout(toggleFlag, 800)
     setPressTimer(timerId)
   }
 
@@ -39,10 +47,10 @@ export const Cell: FC<CellProps> = ({ cell: [value, isRevealed, isFlagged], posi
 
   const isMine = value === -1
   let val = ''
-  if (isMine && isFlagged) {
-    val = '🏳️'
-  } else if (isFlagged) {
+  if (!isRevealed && flagState === 'flag') {
     val = '🚩'
+  } else if (!isRevealed && flagState === 'question') {
+    val = '❓'
   } else if (isMine) {
     val = isRevealed ? '💥' : '💣'
   } else if (value > 0) {
@@ -52,10 +60,10 @@ export const Cell: FC<CellProps> = ({ cell: [value, isRevealed, isFlagged], posi
   return (
     <div
       className={`cell ${(isRevealed || isMine) && 'revealed'} cell-${value}`}
-      onClick={() => onclick(true, isFlagged)}
+      onClick={reveal}
       onContextMenu={(event) => {
         event.preventDefault()
-        onclick(isRevealed, !isFlagged)
+        toggleFlag()
       }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
