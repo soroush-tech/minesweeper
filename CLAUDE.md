@@ -60,7 +60,17 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ### 6. Test coverage after implementation
 
-**After any implementation, run `yarn test:coverage` and confirm the files you touched are exercised by tests.** Add or update co-located `*.test.ts(x)` for any logic you add or change.
+**After any implementation, run `pnpm test:coverage` and confirm the files you touched are exercised by tests.** Add or update co-located `*.test.ts(x)` for any logic you add or change.
+
+## Monorepo layout
+
+This is a pnpm + Turborepo monorepo. Workspaces: `apps/*`, `packages/*`, `workers/*`.
+
+- **`apps/web`** — the React/Vite/Vitest app (`@minesweeper/web`). All web source lives under `apps/web/src/`; paths below are relative to it.
+- **`workers/api`** — AWS Lambda API (`@minesweeper/api`), currently a skeleton.
+- **`packages/`** — reserved for shared code.
+
+Run scripts from the repo root (`pnpm build`, `pnpm lint`, `pnpm test:coverage` delegate through Turborepo), or target one package with `pnpm --filter @minesweeper/web <script>`.
 
 ## Critical conventions
 
@@ -70,12 +80,12 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - **Components:** Grouped by area under `src/components/<area>/Name.tsx`; PascalCase one component per file. An area's barrel `index.ts` uses `export *`, never named re-exports.
 - **API mocking:** The app talks to a mock backend via MSW (`src/service/mocks/`). Game logic runs in `src/utils/mineField.ts` against IndexedDB (`src/service/db/`). Route handlers live in `src/service/mocks/api/`.
 - **Test placement:** Co-located `*.test.ts(x)` next to source, run by vitest (globals on, jsdom). Wrap React renders in `renderWithProvider` from `src/renderWithProvider.tsx`.
-- **Lint:** `yarn lint` runs with `--max-warnings 0` — any warning fails. Prettier `printWidth` and ESLint `max-len` are both **100**.
+- **Lint:** `pnpm lint` runs with `--max-warnings 0` — any warning fails. Prettier `printWidth` and ESLint `max-len` are both **100**.
 - **Commits:** Prettier runs on staged files via the husky `pre-commit` hook (`pretty-quick --staged`).
 - **License:** Prosperity-3.0. Keep the badge/headers intact.
 
 ## Quick checklist before pushing
 
-1. `yarn lint`
-2. `yarn test:coverage` — confirm touched files are covered
-3. `yarn build`
+1. `pnpm lint`
+2. `pnpm test:coverage` — confirm touched files are covered
+3. `pnpm build`

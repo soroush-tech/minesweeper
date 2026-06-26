@@ -16,6 +16,7 @@ lerna-debug.log*
 
 # cache
 .eslintcache
+.turbo
 
 # test coverage
 coverage

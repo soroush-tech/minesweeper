@@ -1,0 +1,26 @@
+{
+  "name": "@minesweeper/api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "license": "Prosperity-3.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "tsc": "tsc --noEmit",
+    "lint": "eslint ./src --ext ts --report-unused-disable-directives --max-warnings 0",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "^3.2.5",
+    "typescript": "^5.2.2",
+    "vitest": "^1.6.0"
+  }
+}
