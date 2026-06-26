@@ -12,6 +12,4 @@ import('./service/mocks/runtime')
   .catch((error: Error) => console.log('msw worker error', error))
 // }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  renderWithProvider(App),
-)
+ReactDOM.createRoot(document.getElementById('root')!).render(renderWithProvider(App))
