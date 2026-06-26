@@ -17,6 +17,12 @@ lerna-debug.log*
 # cache
 .eslintcache
 
+# test coverage
+coverage
+
+# Claude Code local settings
+.claude/settings.local.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

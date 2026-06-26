@@ -21,6 +21,7 @@ module.exports = {
       'error',
       {
         printWidth: 100,
+        endOfLine: 'auto',
       },
     ],
     '@typescript-eslint/no-explicit-any': 'off',

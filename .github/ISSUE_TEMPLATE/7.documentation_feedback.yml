@@ -1,0 +1,49 @@
+name: Documentation Feedback 📝
+description: Provide feedback to help improve the Minesweeper documentation.
+labels: ['status: needs triage', 'support: docs-feedback']
+title: '[docs]'
+type: 'Docs'
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide a clear summary of the feedback or issue in the title above ⬆️.
+
+        Thanks for helping us improve our documentation! ❤️
+  - type: checkboxes
+    attributes:
+      label: Duplicates
+      description: Please [search the history](https://github.com/soroush-tech/minesweeper/issues) to see if similar feedback has already been provided.
+      options:
+        - label: I have searched the existing issues
+          required: true
+  - type: input
+    id: page-url
+    attributes:
+      label: Related page
+      description: Link to the README section or file where you encountered the issue or have feedback.
+      placeholder: https://github.com/soroush-tech/minesweeper#readme
+    validations:
+      required: false
+  - type: dropdown
+    attributes:
+      label: Type of Issue
+      description: What kind of issue or feedback are you providing?
+      options:
+        - Unclear explanations
+        - Missing information
+        - Broken or outdated content
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Issue Description
+      description: |
+        Describe the issue or feedback you have about the documentation. Include any specific examples or details that can help us address the problem.
+      value: |
+        I was looking for ... and found that ...
+  - type: textarea
+    attributes:
+      label: Context 🔦
+      description: Explain what you were trying to accomplish and what led you to this documentation page. Providing context helps us understand the impact and improve the documentation for others.

@@ -1,0 +1,37 @@
+name: Feature request 💡
+description: Suggest a new idea or enhancement for Minesweeper.
+labels: ['status: needs triage']
+type: 'Feature'
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide a clear and concise summary of the feature request in the title above ⬆️.
+
+        Thanks for contributing by suggesting a feature! ❤️
+  - type: checkboxes
+    attributes:
+      label: Duplicates
+      description: Please [search the history](https://github.com/soroush-tech/minesweeper/issues) to see if a similar request already exists.
+      options:
+        - label: I have searched the existing issues
+          required: true
+  - type: checkboxes
+    attributes:
+      label: Latest version
+      description: We continuously roll out improvements in new releases. Ensure that your request reflects the current state of the project.
+      options:
+        - label: I have checked the latest version
+          required: true
+  - type: textarea
+    attributes:
+      label: Summary 💡
+      description: Describe the new feature or enhancement you are proposing.
+  - type: textarea
+    attributes:
+      label: Examples 🌟
+      description: Provide links to relevant specifications, other implementations, or visual examples of the expected behavior.
+  - type: textarea
+    attributes:
+      label: Motivation 🔦
+      description: Explain why this feature is important. How would it benefit you or others? Providing context helps us understand the impact and value of this request.
