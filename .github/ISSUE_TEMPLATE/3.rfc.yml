@@ -1,0 +1,57 @@
+name: RFC 💬
+description: Request for comments for your proposal.
+title: '[RFC] '
+labels: ['status: needs triage']
+type: 'RFC'
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide a searchable summary of the RFC in the title above ⬆️.
+
+        Thanks for contributing by creating an RFC! ❤️
+  - type: textarea
+    attributes:
+      label: What's the Motivation? 🤔
+      description: Write a brief overview of the issue or opportunity you are addressing. Explain the goals you are trying to achieve and any relevant context to help us understand the motivation behind this RFC.
+
+  - type: textarea
+    attributes:
+      label: What are the requirements? ❓
+      description: List the requirements or criteria that the proposed solution must meet. These should outline the essential aspects that the proposal needs to address successfully.
+
+  - type: textarea
+    attributes:
+      label: What are our options? 💡
+      description: Have you explored alternative approaches to achieve your goals? Briefly discuss other potential solutions and why you believe your proposal is preferable.
+
+  - type: textarea
+    attributes:
+      label: Proposed solution 🟢
+      description: |
+        Describe your proposed solution in detail. Include the rationale for your approach and how it addresses the problem. 
+
+        Consider:
+        - Adding diagrams or illustrations to clarify complex ideas
+        - Providing code examples if relevant
+        - Linking to any related documentation or project plans
+  - type: textarea
+    attributes:
+      label: Risks & mitigations 🚨
+      description: |
+        Describe the key risks associated with the proposed solution and how each risk will be mitigated.
+
+        Consider:
+          - Technical risks such as performance, scalability, security, or maintainability concerns
+          - User-facing risks including regressions, accessibility issues, or unexpected behavior changes
+          - Operational risks such as deployment complexity, migration requirements, or rollback limitations
+          - Dependencies on external systems, teams, or unresolved decisions
+          - Mitigation strategies including feature flags, phased rollouts, monitoring, testing, documentation, and fallback plans
+          - Risks that currently have no mitigation and require further discussion or approval
+
+        Highlight anything that is difficult to reverse, could impact production systems, or may affect existing users.
+
+  - type: textarea
+    attributes:
+      label: Resources and benchmarks 🔗
+      description: Include any relevant links, documents, issues, or pull requests that provide additional context or support for your RFC.
