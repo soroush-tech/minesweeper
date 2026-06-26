@@ -10,7 +10,9 @@ export const MineField: FC<MineFieldProps> = ({ board }) => {
   const { field, id } = board
   return (
     <div className="field">
-      {field?.map((row, y) => <Row key={`${id}:${y}`} cells={row} y={y} />)}
+      {field?.map((row, y) => (
+        <Row key={`${id}:${y}`} cells={row} y={y} />
+      ))}
     </div>
   )
 }
