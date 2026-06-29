@@ -39,6 +39,7 @@ const board: Board = {
   field: [],
   start: null,
   end: null,
+  win: false,
 }
 
 const setFlags = (flags: Record<string, FlagState>) =>

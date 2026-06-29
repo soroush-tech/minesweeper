@@ -8,7 +8,8 @@ interface ObserverFaceProps {
 }
 export const ObserverFace = ({ board, changeBoard }: ObserverFaceProps) => {
   const initLoading = emoji.initLoading[getRandomInt(0, emoji.initLoading.length)]
-  const state = emoji.status[0]
+  const isGameOver = board?.end != null
+  const state = isGameOver ? emoji.status[board.win ? 2 : 3] : emoji.status[0]
   // const isLoading = emoji.isLoading[getRandomInt(0, emoji.isLoading.length)]
   return (
     <div

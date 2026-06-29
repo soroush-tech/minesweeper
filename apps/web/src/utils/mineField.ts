@@ -10,6 +10,7 @@ import { IndexedDB } from '../service/db/IndexedDB'
 import { transformCellForClient } from './transformFieldForClient'
 import { isEmpty } from './isEmpty.ts'
 import { revealMinesweeperGrid } from './revealMinesweeperGrid'
+import { isWin } from './isWin.ts'
 
 export interface Update {
   position: Position
@@ -31,6 +32,7 @@ class MineField {
       field: generateMinesweeperGrid(options),
       start: null,
       end: null,
+      win: false,
     }
     await this.db.addObj(board)
     return {
@@ -51,8 +53,6 @@ class MineField {
       newBord.start = new Date().toISOString()
       newBord.field = generateMinesweeperGrid(board.options, position, actions)
     }
-    //@todo win scenario
-
     const [revealed, flag] = actions
     const [selectedCell, selectedRow] = position
     const x = Number(selectedCell)
@@ -63,6 +63,9 @@ class MineField {
       isHitMine = newBord.field[y][x][0] === -1
       if (isHitMine) {
         newBord.end = new Date().toISOString()
+      } else if (isWin(newBord.field)) {
+        newBord.end = new Date().toISOString()
+        newBord.win = true
       }
     } else if (flag !== null) {
       newBord.field[y][x][2] = flag

@@ -22,6 +22,7 @@ export const Board = () => {
         field: generateMinesweeperGrid(options),
         start: null,
         end: null,
+        win: false,
       }
   return (
     <div className="board">
