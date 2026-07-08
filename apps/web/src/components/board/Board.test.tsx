@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import { renderWithProvider } from '../../renderWithProvider'
-import { Board } from './Board'
+import { MineSweeper } from './MineSweeper'
 import { server } from '../../service/mocks/server'
 import { type Board as BoardT } from '../../utils/generateMinesweeperGrid'
 
@@ -16,9 +16,10 @@ const makeBoard = (id: string, overrides: Partial<BoardT> = {}): BoardT => ({
 })
 
 describe('Board', () => {
-  it('starts a new game when the face is clicked after game over', async () => {
-    // In-memory handlers: board-1 is already lost, every later board is fresh.
-    let created = 0
+  // In-memory handlers: board-1 is already lost, every later board is fresh.
+  // The counter never resets — the query cache is shared across tests.
+  let created = 0
+  beforeEach(() => {
     server.use(
       http.get('/board/new', () => HttpResponse.json(makeBoard(`board-${++created}`))),
       http.get('/board/:id', ({ params }) => {
@@ -26,8 +27,17 @@ describe('Board', () => {
         return HttpResponse.json(makeBoard(id, id === 'board-1' ? { end: 'now' } : {}))
       }),
     )
+  })
 
-    render(renderWithProvider(Board))
+  it('shows the window title bar and menu bar', () => {
+    render(renderWithProvider(MineSweeper))
+    expect(screen.getByText('Minesweeper')).toBeInTheDocument()
+    expect(screen.getByText('Game')).toBeInTheDocument()
+    expect(screen.getByText('Help')).toBeInTheDocument()
+  })
+
+  it('starts a new game when the face is clicked after game over', async () => {
+    render(renderWithProvider(MineSweeper))
     const loseFace = await screen.findByAltText('x-eyes face')
 
     fireEvent.click(loseFace)
