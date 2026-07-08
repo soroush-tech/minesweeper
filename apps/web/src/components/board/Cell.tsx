@@ -56,12 +56,14 @@ export const Cell: FC<CellProps> = ({
 
   const isMine = value === -1
   let val: ReactNode = ''
-  if (!isRevealed && flagState === 'flag') {
+  // A mine value is only visible to the client once it exploded or the game is
+  // over, so it wins over a flag; wrong flags (non-mine cells) stay flagged.
+  if (isMine) {
+    val = <img src={mineIcon} alt="mine" />
+  } else if (!isRevealed && flagState === 'flag') {
     val = <img src={flagIcon} alt="flag" />
   } else if (!isRevealed && flagState === 'question') {
     val = <img src={questionMarkIcon} alt="question mark" />
-  } else if (isMine) {
-    val = <img src={mineIcon} alt="mine" />
   } else if (value > 0) {
     val = value.toString()
   }

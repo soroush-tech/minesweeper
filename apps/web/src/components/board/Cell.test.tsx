@@ -45,11 +45,17 @@ describe('Cell', () => {
     expect(cell).not.toHaveClass('exploded')
   })
 
-  it('keeps the flag on a flagged mine at game over', () => {
+  it('shows the mine instead of the flag on a flagged mine at game over', () => {
     useFlagStore.setState({ boards: { b1: { '0:0': 'flag' } } })
     renderCell([-1, false, false])
+    expect(screen.getByAltText('mine')).toBeInTheDocument()
+    expect(screen.queryByAltText('flag')).not.toBeInTheDocument()
+  })
+
+  it('keeps the flag on a wrongly flagged cell at game over', () => {
+    useFlagStore.setState({ boards: { b1: { '0:0': 'flag' } } })
+    renderCell([0, false, false], true)
     expect(screen.getByAltText('flag')).toBeInTheDocument()
-    expect(screen.queryByAltText('mine')).not.toBeInTheDocument()
   })
 
   it('shows the adjacent mine count on a revealed cell', () => {
