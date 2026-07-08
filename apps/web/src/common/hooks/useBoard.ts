@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Options } from '../../utils/generateMinesweeperGrid.ts'
 import { useBoardQuery } from './useBoardQuery.ts'
 import { useQueryClient } from '@tanstack/react-query'
@@ -13,14 +13,13 @@ export const useBoard = (options?: Options) => {
     await queryClient.refetchQueries({ queryKey: ['board', id] })
     setId(id)
   }
-  useEffect(() => {
-    if (!result.isFetched) {
-      return
-    }
-    if (result?.data?.id && id !== null && id !== result?.data?.id) {
-      setId(result.data.id)
-    }
-  }, [result?.data?.id, result.isFetched, id])
+
+  // Adjust the active id to the freshly created board during render — React's
+  // supported alternative to syncing state from fetched data in an effect.
+  const fetchedId = result.data?.id
+  if (result.isFetched && fetchedId && id !== fetchedId) {
+    setId(fetchedId)
+  }
 
   return { result, changeBoard }
 }

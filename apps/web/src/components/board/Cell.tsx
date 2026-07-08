@@ -41,7 +41,7 @@ export const Cell: FC<CellProps> = ({ cell: [value, isRevealed], position, board
   }
 
   const handleTouchEnd = () => {
-    pressTimer && clearTimeout(pressTimer)
+    if (pressTimer) clearTimeout(pressTimer)
     setPressTimer(undefined)
   }
 
