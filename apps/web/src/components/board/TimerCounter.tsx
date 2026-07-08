@@ -21,8 +21,10 @@ export const TimerCounter: FC<TimerCounter> = ({ start, end }) => {
   }, [start, end])
 
   const reference = end ?? new Date(now).toISOString()
+  // `now` can lag behind `start` until the first interval tick, so clamp to
+  // avoid rendering a negative elapsed time.
   const timeDifference =
-    start == null ? 0 : Math.round(calculateTimeDifferenceInSeconds(start, reference))
+    start == null ? 0 : Math.max(0, Math.round(calculateTimeDifferenceInSeconds(start, reference)))
 
   return (
     <div className="minesCounter">
