@@ -1,6 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ObserverFace } from './ObserverFace'
-import { emoji } from '../../common/consts'
 import { type Board } from '../../utils/generateMinesweeperGrid'
 
 const makeBoard = (overrides: Partial<Board> = {}): Board => ({
@@ -16,23 +15,28 @@ const makeBoard = (overrides: Partial<Board> = {}): Board => ({
 describe('ObserverFace', () => {
   it('shows the default face while the game is in progress', () => {
     render(<ObserverFace board={makeBoard()} changeBoard={vi.fn()} />)
-    expect(screen.getByText(emoji.status[0])).toBeInTheDocument()
+    expect(screen.getByAltText('smiling face')).toBeInTheDocument()
+  })
+
+  it('shows the default face while the board is still loading', () => {
+    render(<ObserverFace board={makeBoard({ id: '' })} changeBoard={vi.fn()} />)
+    expect(screen.getByAltText('smiling face')).toBeInTheDocument()
   })
 
   it('shows the win face when the game ends in a win', () => {
     render(<ObserverFace board={makeBoard({ end: 'now', win: true })} changeBoard={vi.fn()} />)
-    expect(screen.getByText(emoji.status[2])).toBeInTheDocument()
+    expect(screen.getByAltText('sunglasses face')).toBeInTheDocument()
   })
 
   it('shows the lose face when the game ends in a loss', () => {
     render(<ObserverFace board={makeBoard({ end: 'now', win: false })} changeBoard={vi.fn()} />)
-    expect(screen.getByText(emoji.status[3])).toBeInTheDocument()
+    expect(screen.getByAltText('x-eyes face')).toBeInTheDocument()
   })
 
   it('starts a new board on click', () => {
     const changeBoard = vi.fn().mockResolvedValue(undefined)
     render(<ObserverFace board={makeBoard()} changeBoard={changeBoard} />)
-    fireEvent.click(screen.getByText(emoji.status[0]))
+    fireEvent.click(screen.getByAltText('smiling face'))
     expect(changeBoard).toHaveBeenCalledWith('new')
   })
 })

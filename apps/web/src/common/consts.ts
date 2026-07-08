@@ -17,37 +17,3 @@ export const segmentMap: Record<DigitKeys, string[]> = {
   '8': [on_, on_, on_, on_, on_, on_, on_],
   '9': [on_, on_, on_, on_, on_, on_, off],
 }
-
-export const emoji = {
-  status: [
-    '🙂', // default
-    '😎', // isFinished
-    '🥳', // isWinn
-    '😵', // isLose
-    '🥱', // isAway
-    '😴', // isTimout +999s
-  ],
-  initLoading: ['🏗️', '🏖️', '🗺️', '🚀', '🛸', ' 🚑', '🚂'],
-  isLoading: [
-    '😇',
-    '☺️',
-    '😎',
-    '🤓',
-    '🤤',
-    '🤤',
-    '🫢',
-    '🤭',
-    '😝',
-    '😋',
-    '🧐',
-    '😴',
-    '😵',
-    '🤯',
-    '😵‍💫',
-    '🥶',
-    '🥵',
-    '🤕',
-    '🥺',
-    '😳',
-  ],
-}
