@@ -23,6 +23,7 @@ export interface Board {
   field: Field
   start: string | null
   end: string | null
+  win: boolean
 }
 
 export const countMine = (field: Field, [cell, row]: Position, options: Options): number => {

@@ -1,10 +1,10 @@
 import './App.css'
-import { Board } from './components/board'
+import { MineSweeper } from './components/board/MineSweeper'
 
 function App() {
   return (
     <div>
-      <Board />
+      <MineSweeper />
     </div>
   )
 }

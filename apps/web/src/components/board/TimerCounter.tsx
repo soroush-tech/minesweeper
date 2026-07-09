@@ -9,18 +9,22 @@ interface TimerCounter {
 }
 
 export const TimerCounter: FC<TimerCounter> = ({ start, end }) => {
-  const [timeDifference, setTimeDifference] = useState<number>(0)
+  // `now` advances once per second while the game is running so the derived
+  // elapsed time keeps ticking, without setting state in the effect body.
+  const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
-    if (start == null) {
-      setTimeDifference(0)
+    if (start == null || end != null) {
       return
     }
-    const intervalId = setInterval(() => {
-      const differenceInSeconds = calculateTimeDifferenceInSeconds(start, end)
-      setTimeDifference(Math.round(differenceInSeconds))
-    }, 1000)
+    const intervalId = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(intervalId)
   }, [start, end])
+
+  const reference = end ?? new Date(now).toISOString()
+  // `now` can lag behind `start` until the first interval tick, so clamp to
+  // avoid rendering a negative elapsed time.
+  const timeDifference =
+    start == null ? 0 : Math.max(0, Math.round(calculateTimeDifferenceInSeconds(start, reference)))
 
   return (
     <div className="minesCounter">

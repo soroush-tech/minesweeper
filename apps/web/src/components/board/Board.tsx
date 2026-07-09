@@ -1,17 +1,21 @@
-import './board.css'
-import { MineField } from './MineField.tsx'
-import { MinesCounter } from './MinesCounter.tsx'
+import { MineField } from './MineField'
+import { MinesCounter } from './MinesCounter'
 import { TimerCounter } from './TimerCounter'
 import { useBoard } from '../../common/hooks/useBoard'
 import { ObserverFace } from './ObserverFace'
 import { type Board as BoardT, generateMinesweeperGrid } from '../../utils/generateMinesweeperGrid'
 
-export const Board = () => {
-  const options = {
-    cells: 9,
-    rows: 9,
-    mines: 10,
-  }
+interface Options {
+  rows: number
+  cells: number
+  mines: number
+}
+
+interface BoardProps {
+  options: Options
+}
+
+export const Board = ({ options }: BoardProps) => {
   const { result, changeBoard } = useBoard(options)
   const { data, isFetched } = result
   const board: BoardT = isFetched
@@ -22,11 +26,12 @@ export const Board = () => {
         field: generateMinesweeperGrid(options),
         start: null,
         end: null,
+        win: false,
       }
   return (
     <div className="board">
       <div className="header">
-        <MinesCounter />
+        <MinesCounter board={board} />
         <ObserverFace board={data} changeBoard={changeBoard} />
         <TimerCounter start={data?.start} end={data?.end} />
       </div>
