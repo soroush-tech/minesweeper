@@ -1,0 +1,9 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+  - 'workers/*'
+allowBuilds:
+  msw: true
+onlyBuiltDependencies:
+  - esbuild
+  - msw

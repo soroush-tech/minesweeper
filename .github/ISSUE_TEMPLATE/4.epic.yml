@@ -1,0 +1,47 @@
+name: Epic 🪡
+description: An "epic" represents a high-level concept or goal that can be broken down into smaller, more manageable tasks or stories.
+title: '[Epic] '
+labels: ['epic']
+type: 'Feature'
+body:
+  - type: textarea
+    attributes:
+      label: Epic Overview 🎯
+      description: |
+        Briefly describe the high-level goal or concept this Epic represents. Include any relevant context or background information.
+      value: |
+        [Provide a summary of the Epic here.]
+
+  - type: textarea
+    attributes:
+      label: Implementation Details 🛠️
+      description: |
+        Describe any key implementation details, technical approaches, or considerations. Include diagrams or code examples if needed.
+      value: |
+        [Provide implementation notes here.]
+
+  - type: textarea
+    attributes:
+      label: Key Features ✨
+      description: |
+        Outline the main features or objectives of this Epic. Use a table or bullet points to clearly define each feature.
+      value: |
+        | Feature         | Description                                                                                           |
+        | --------------- | ----------------------------------------------------------------------------------------------------- |
+        | Example Feature | Description of the feature, including any relevant details or constraints.                          |
+
+  - type: textarea
+    attributes:
+      label: Acceptance Criteria ✅
+      description: |
+        Define the criteria that must be met for this Epic to be considered complete.
+      value: |
+        [Provide acceptance criteria here.]
+
+  - type: textarea
+    attributes:
+      label: Dependencies
+      description: |
+        List any dependencies or related epics/stories that are relevant to this epic.
+      value: |
+        - [ ] #

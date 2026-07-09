@@ -2,6 +2,17 @@
 
 # Minesweeper
 
+## Monorepo layout
+
+This repository is a pnpm + Turborepo monorepo:
+
+- `apps/web` — the React + TypeScript + Vite app (`@minesweeper/web`)
+- `workers/api` — AWS Lambda API (`@minesweeper/api`), currently a skeleton
+- `packages/` — reserved for shared code
+
+Run `pnpm <script>` from the repo root (delegates through Turborepo), or
+target one package with `pnpm --filter @minesweeper/web <script>`.
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -38,9 +49,8 @@ export default {
 To get started with this project, simply run:
 
 ```bash
-yarn install
-yarn prepare
-yarn dev
+pnpm install
+pnpm dev
 ```
 
 ## Available Scripts

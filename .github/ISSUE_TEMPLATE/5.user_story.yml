@@ -1,0 +1,61 @@
+name: User Story 📖
+description: Create a user story linked to an Epic, with clear acceptance criteria.
+title: '[Story] '
+labels: ['type: story']
+type: 'Story'
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please write a clear, user-focused story title above ⬆️.  
+        Format suggestion: "As a [persona], I want [goal] so that [reason]."
+
+  - type: textarea
+    attributes:
+      label: Story Description ✏️
+      description: |
+        Briefly describe the feature or functionality from the end user's perspective. 
+        Reference the parent Epic if available (e.g., EPIC-01).
+
+  - type: textarea
+    attributes:
+      label: Acceptance Criteria ✅
+      description: |
+        Define clear, testable conditions that must be met for this story to be considered complete.
+        Use bullet points or Gherkin syntax if preferred (e.g., Given/When/Then).
+      placeholder: |
+        - Player sees a winning face the moment the last safe cell is revealed
+        - The timer stops on win
+        - Starting a new game resets the board and status
+
+  - type: textarea
+    attributes:
+      label: Dependencies 🔗
+      description: |
+        List any blocking Epics, Stories, or Tasks that must be completed first.
+
+  - type: textarea
+    attributes:
+      label: Definition of Ready (DoR) 📋
+      description: |
+        What must be true before starting work? Examples:
+        - Story is linked to an Epic
+        - Acceptance criteria are clear
+        - Dependencies are identified
+        - Estimate is added
+
+  - type: textarea
+    attributes:
+      label: Definition of Done (DoD) 🏁
+      description: |
+        What must be true before closing the story? Examples:
+        - Code reviewed and merged
+        - Automated tests passing
+        - Verified in staging
+        - Documentation updated
+
+  - type: textarea
+    attributes:
+      label: Additional Notes or Resources 📎
+      description: |
+        Add any links, documents, mockups, or references to support the story.
