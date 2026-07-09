@@ -2,10 +2,10 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,26 +19,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Read Node.js version from .nvmrc
-        id: read-node-version
-        run: |
-          if [ -f "${{ github.workspace }}/.nvmrc" ]; then
-            NODE_VERSION=$(cat ${{ github.workspace }}/.nvmrc)
-            echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
-          else
-            echo ".nvmrc file not found"
-            exit 1
-          fi
+        uses: actions/checkout@v7
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
           cache: pnpm
 
       - name: Install dependencies
@@ -48,14 +37,14 @@ jobs:
         run: pnpm build
 
       - name: Upload artifact
-        if: github.event_name == 'push'
-        uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./apps/web/build
 
   # Deployment job
   deploy:
-    if: github.event_name == 'push'
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
 
@@ -66,4 +55,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
