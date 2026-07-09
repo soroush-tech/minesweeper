@@ -1,0 +1,193 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Detect node version / package manager once and expose them as outputs the
+  # other jobs reuse via needs.prepare.outputs.*
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 15
+    outputs:
+      node_version: ${{ steps.node-version.outputs.version }}
+      manager: ${{ steps.detect-package-manager.outputs.manager }}
+      command: ${{ steps.detect-package-manager.outputs.command }}
+      runner: ${{ steps.detect-package-manager.outputs.runner }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          persist-credentials: false
+
+      - name: Read Node.js version from .nvmrc
+        id: node-version
+        run: echo "version=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
+
+      - name: Detect package manager
+        id: detect-package-manager
+        run: |
+          if [ -f "${{ github.workspace }}/pnpm-lock.yaml" ]; then
+            echo "manager=pnpm" >> $GITHUB_OUTPUT
+            echo "command=install --frozen-lockfile" >> $GITHUB_OUTPUT
+            echo "runner=pnpm" >> $GITHUB_OUTPUT
+            exit 0
+          elif [ -f "${{ github.workspace }}/yarn.lock" ]; then
+            echo "manager=yarn" >> $GITHUB_OUTPUT
+            echo "command=install --frozen-lockfile --non-interactive" >> $GITHUB_OUTPUT
+            echo "runner=yarn" >> $GITHUB_OUTPUT
+            exit 0
+          elif [ -f "${{ github.workspace }}/package.json" ]; then
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "command=ci" >> $GITHUB_OUTPUT
+            echo "runner=npm" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            echo "Unable to determine package manager"
+            exit 1
+          fi
+
+  # Lint + typecheck the whole workspace once (cheap, recursive).
+  lint:
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        if: needs.prepare.outputs.manager == 'pnpm'
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: ${{ needs.prepare.outputs.node_version }}
+          cache: ${{ needs.prepare.outputs.manager }}
+
+      - name: Install dependencies
+        env:
+          CI: true
+        run: ${{ needs.prepare.outputs.manager }} ${{ needs.prepare.outputs.command }}
+
+      - name: Run Lint
+        run: ${{ needs.prepare.outputs.runner }} run lint
+
+      - name: Run Typecheck
+        run: ${{ needs.prepare.outputs.runner }} run tsc
+
+  # Web app unit tests with coverage.
+  web:
+    needs: [prepare, lint]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        if: needs.prepare.outputs.manager == 'pnpm'
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: ${{ needs.prepare.outputs.node_version }}
+          cache: ${{ needs.prepare.outputs.manager }}
+
+      - name: Install dependencies
+        env:
+          CI: true
+        run: ${{ needs.prepare.outputs.manager }} ${{ needs.prepare.outputs.command }}
+
+      # Build uploads Codecov bundle analysis when the token is present.
+      - name: Build project
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: ${{ needs.prepare.outputs.runner }} run build
+
+      - name: Run Tests with Coverage
+        run: ${{ needs.prepare.outputs.runner }} --filter @minesweeper/web test:coverage
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./apps/web/coverage/lcov.info
+          slug: soroush-tech/minesweeper
+          flags: web
+          name: web
+
+  # AWS Lambda API.
+  worker:
+    needs: [prepare, lint]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        if: needs.prepare.outputs.manager == 'pnpm'
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: ${{ needs.prepare.outputs.node_version }}
+          cache: ${{ needs.prepare.outputs.manager }}
+
+      - name: Install dependencies
+        env:
+          CI: true
+        run: ${{ needs.prepare.outputs.manager }} ${{ needs.prepare.outputs.command }}
+
+      - name: Run Tests with Coverage
+        run: ${{ needs.prepare.outputs.runner }} --filter @minesweeper/api test:coverage
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./workers/api/coverage/lcov.info
+          slug: soroush-tech/minesweeper
+          flags: api
+          name: api
+
+  # Single stable status check for branch protection: fails only if a required
+  # job actually failed or was cancelled.
+  ci-ok:
+    name: ci-ok
+    if: always()
+    needs: [prepare, lint, web, worker]
+    runs-on: ubuntu-latest
+    permissions: {}
+    timeout-minutes: 5
+    steps:
+      - name: Require all jobs to pass
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "A required job failed or was cancelled."
+          exit 1

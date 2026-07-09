@@ -1,0 +1,116 @@
+name: Deploy Web (GitHub Pages)
+
+# Deploys apps/web to GitHub Pages: manual dispatch only — never from a push, PR
+# merge, or CI completion. A release is a deliberate act with required,
+# human-written notes; every deploy creates a matching git tag + GitHub Release.
+
+on:
+  workflow_dispatch:
+    inputs:
+      notes:
+        description: Release notes (markdown) for the GitHub Release — use \n for line breaks
+        required: true
+        type: string
+
+concurrency:
+  group: deploy-web
+  cancel-in-progress: false
+
+jobs:
+  build:
+    # master-only: a release always comes off the CI-passed master branch, even
+    # though the dispatch UI lets you pick any ref.
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          persist-credentials: false
+
+      - name: Read web app version
+        id: version
+        run: echo "version=$(node -p "require('./apps/web/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Read Node.js version from .nvmrc
+        id: node-version
+        run: echo "version=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: ${{ steps.node-version.outputs.version }}
+          cache: pnpm
+
+      - name: Install dependencies
+        env:
+          CI: true
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm test:coverage
+
+      - name: Build project
+        run: pnpm build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
+        with:
+          path: ./apps/web/build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    timeout-minutes: 15
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5
+
+  # Tag + GitHub Release for the deployed version — gated on the release's
+  # existence so a rerun can repair a missing release after a successful deploy.
+  # Notes are the required `notes` input; context values go through env (never
+  # spliced into shell) and --notes-file avoids escaping arbitrary markdown.
+  # Parameter expansion turns only the literal `\n` escapes from the single-line
+  # dispatch input into real line breaks (workflow_dispatch has no multiline
+  # field), leaving other backslash sequences untouched.
+  release:
+    needs: [build, deploy]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the GitHub Release + tag
+    timeout-minutes: 15
+    steps:
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          NOTES: ${{ inputs.notes }}
+          VERSION: ${{ needs.build.outputs.version }}
+          TARGET: ${{ github.sha }}
+        run: |
+          tag="web@$VERSION"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "⏭️ GitHub Release \`$tag\` already exists — skipped (bump apps/web version to release)." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          notes=${NOTES//'\n'/$'\n'}
+          printf '%s' "$notes" > release-notes.md
+          gh release create "$tag" --target "$TARGET" --title "$tag" --notes-file release-notes.md
+          echo "### 🏷️ Released \`$tag\`" >> "$GITHUB_STEP_SUMMARY"

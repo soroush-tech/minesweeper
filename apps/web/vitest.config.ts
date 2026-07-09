@@ -6,6 +6,9 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./setup/tests/vitest-setup.ts'],
+    coverage: {
+      reporter: ['text', 'html', 'lcov'],
+    },
   },
   resolve: {
     alias: {
