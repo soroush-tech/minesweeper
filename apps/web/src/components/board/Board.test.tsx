@@ -36,6 +36,16 @@ describe('Board', () => {
     expect(screen.getByText('Help')).toBeInTheDocument()
   })
 
+  it('opens the Custom Field dialog from the Game menu', () => {
+    render(renderWithProvider(MineSweeper))
+    expect(screen.queryByText('Custom Field')).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByText('Game'))
+    fireEvent.click(screen.getByText('Custom...'))
+
+    expect(screen.getByText('Custom Field')).toBeInTheDocument()
+  })
+
   it('starts a new game when the face is clicked after game over', async () => {
     render(renderWithProvider(MineSweeper))
     const loseFace = await screen.findByAltText('x-eyes face')

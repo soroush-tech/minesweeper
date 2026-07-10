@@ -1,10 +1,7 @@
 .minesweeper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  position: relative;
+  display: inline-block;
   margin: 4px;
-  border: 4px outset #fff;
-  background-color: #ddd;
 
   .board {
     display: flex;
@@ -12,56 +9,9 @@
     flex-direction: column;
   }
 
-  .windowBar {
-    flex-direction: column;
-    width: 100%;
-    display: flex;
-    flex-grow: 1;
-  }
-
-  .titleBar {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 4px;
-    background: linear-gradient(90deg, #0a246a, #3a6ea5, #6a8ccb);
-    color: #fff;
-    font-family: 'W95FA', 'pixel-art', sans-serif;
-    font-size: 16px;
-    -webkit-font-smoothing: none;
-    margin: 2px;
-  }
-
-  .titleBar .icon {
-    width: 16px;
-    height: 16px;
-    margin: 0 4px;
-  }
-
-  .titleBar .title {
-    flex: 1;
-    text-align: left;
-  }
-
-  .windowButtons {
-    display: flex;
-    gap: 2px;
-  }
-
-  .windowButton {
-    width: 18px;
-    height: 18px;
-    border: 2px outset #fff;
-    background-color: #ddd;
-    color: #000;
-    font-size: 11px;
-    font-weight: bold;
-    text-align: center;
-    font-family: 'pixel-art', sans-serif;
-  }
-
   .menuBar {
     display: flex;
+    align-self: stretch;
     gap: 4px;
     padding: 2px 4px;
     background-color: #ddd;
@@ -72,8 +22,67 @@
     text-align: left;
   }
 
+  .menuItemWrapper {
+    position: relative;
+    margin: 0 4px;
+  }
+
   .menuItem {
+    display: inline-block;
     padding: 1px 6px;
+    border: 2px solid transparent;
+    cursor: default;
+  }
+
+  .menuItem:hover,
+  .menuItem.active {
+    border: 2px outset #fff;
+  }
+
+  .menuDropdown {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 10;
+    min-width: 150px;
+    padding: 2px;
+    border: 2px outset #fff;
+    background-color: #ddd;
+    color: #000;
+    font-family: 'W95FA', 'pixel-art', sans-serif;
+    font-size: 16px;
+    -webkit-font-smoothing: none;
+  }
+
+  .menuDropdownItem {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 8px 2px 2px;
+    white-space: nowrap;
+  }
+
+  .menuDropdownItem:hover {
+    background-color: #0a246a;
+    color: #fff;
+  }
+
+  .menuCheck {
+    text-align: center;
+  }
+
+  .menuShortcut {
+    text-align: right;
+  }
+
+  .menuSeparator {
+    height: 0;
+    margin: 3px 2px;
+    border-top: 1px solid #888;
+    border-bottom: 1px solid #fff;
   }
 
   .board .header {
@@ -176,4 +185,63 @@
   .cell-8 {
     color: #6f6f6f;
   }
+}
+
+/* Place the Custom Field dialog floating over the main window, overhanging
+   its right edge like the classic dialog. */
+.minesweeper .window.dialog {
+  position: absolute;
+  top: 56px;
+  left: 22px;
+  min-width: 280px;
+  font-family: 'W95FA', 'pixel-art', sans-serif;
+  font-size: 16px;
+  -webkit-font-smoothing: none;
+}
+
+.customFieldBody {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+  color: #000;
+}
+
+.customFieldFields {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.customFieldRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.customFieldRow input {
+  width: 48px;
+  padding: 2px 4px;
+  border: 2px inset #fff;
+  background-color: #fff;
+  color: #000;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.customFieldButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Scoped past `.window .windowButton` so the dialog buttons size correctly. */
+.window.dialog .dialogButton {
+  width: 76px;
+  height: 26px;
+  font-family: 'W95FA', 'pixel-art', sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  cursor: default;
 }
