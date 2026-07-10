@@ -54,4 +54,37 @@ describe('Board', () => {
 
     await waitFor(() => expect(screen.getByAltText('smiling face')).toBeInTheDocument())
   })
+
+  // These select a difficulty, which evicts the shared 'board/new' cache — keep
+  // them last so they don't disturb the board-content tests above.
+  const menuCheckFor = (label: string) =>
+    screen
+      .getAllByRole('menuitem')
+      .find((item) => item.querySelector('.menuLabel')?.textContent === label)
+      ?.querySelector('.menuCheck')?.textContent
+
+  it('marks the chosen difficulty in the Game menu', () => {
+    render(renderWithProvider(MineSweeper))
+    fireEvent.click(screen.getByText('Game'))
+    expect(menuCheckFor('Beginner')).toBe('✓')
+
+    fireEvent.click(screen.getByText('Expert'))
+    fireEvent.click(screen.getByText('Game'))
+    expect(menuCheckFor('Expert')).toBe('✓')
+    expect(menuCheckFor('Beginner')).toBe('')
+  })
+
+  it('applies custom dimensions and marks Custom in the menu', () => {
+    render(renderWithProvider(MineSweeper))
+    fireEvent.click(screen.getByText('Game'))
+    fireEvent.click(screen.getByText('Custom...'))
+
+    const inputs = document.querySelectorAll<HTMLInputElement>('.customFieldRow input')
+    fireEvent.change(inputs[0], { target: { value: '12' } })
+    fireEvent.click(screen.getByText('OK'))
+
+    expect(screen.queryByText('Custom Field')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByText('Game'))
+    expect(menuCheckFor('Custom...')).toBe('✓')
+  })
 })

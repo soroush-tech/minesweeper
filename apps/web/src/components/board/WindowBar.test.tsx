@@ -28,15 +28,15 @@ describe('WindowBar', () => {
     ])
   })
 
-  it('checks Beginner, Marks and Color, and shows the New shortcut', () => {
-    render(<WindowBar />)
+  it('checks the active difficulty alongside Marks and Color, and shows the shortcut', () => {
+    render(<WindowBar activeDifficulty="Expert" />)
     fireEvent.click(screen.getByText('Game'))
 
     const checked = screen
       .getAllByRole('menuitem')
       .filter((item) => item.querySelector('.menuCheck')?.textContent === '✓')
       .map((item) => item.querySelector('.menuLabel')?.textContent)
-    expect(checked).toEqual(['Beginner', 'Marks (?)', 'Color'])
+    expect(checked).toEqual(['Expert', 'Marks (?)', 'Color'])
     expect(screen.getByText('F2')).toBeInTheDocument()
   })
 
@@ -54,13 +54,22 @@ describe('WindowBar', () => {
     expect(screen.queryByRole('menu')).not.toBeInTheDocument()
   })
 
-  it('fires onCustom and closes the dropdown when Custom... is clicked', () => {
-    const onCustom = vi.fn()
-    render(<WindowBar onCustom={onCustom} />)
+  it('fires onSelect with the chosen entry and closes the dropdown', () => {
+    const onSelect = vi.fn()
+    render(<WindowBar onSelect={onSelect} />)
+    fireEvent.click(screen.getByText('Game'))
+    fireEvent.click(screen.getByText('Expert'))
+
+    expect(onSelect).toHaveBeenCalledWith('Expert')
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+  })
+
+  it('fires onSelect with "Custom..." when Custom is clicked', () => {
+    const onSelect = vi.fn()
+    render(<WindowBar onSelect={onSelect} />)
     fireEvent.click(screen.getByText('Game'))
     fireEvent.click(screen.getByText('Custom...'))
 
-    expect(onCustom).toHaveBeenCalledTimes(1)
-    expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+    expect(onSelect).toHaveBeenCalledWith('Custom...')
   })
 })

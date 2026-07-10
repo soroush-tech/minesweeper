@@ -19,7 +19,7 @@ export const Cell: FC<CellProps> = ({
   boardId,
   isGameOver,
 }) => {
-  const { mutate } = useBoardMutation()
+  const { mutate } = useBoardMutation(boardId)
   const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | undefined>(undefined)
 
   const key = `${position.x}:${position.y}`

@@ -12,7 +12,7 @@ type GameMenuEntry = {
 const gameMenuEntries: GameMenuEntry[] = [
   { label: 'New', shortcut: 'F2' },
   null,
-  { label: 'Beginner', check: true },
+  { label: 'Beginner' },
   { label: 'Intermediate' },
   { label: 'Expert' },
   { label: 'Custom...' },
@@ -25,13 +25,17 @@ const gameMenuEntries: GameMenuEntry[] = [
   { label: 'Exit' },
 ]
 
+// Difficulty entries show a ✓ against the active one instead of a static check.
+const difficultyLabels = ['Beginner', 'Intermediate', 'Expert', 'Custom...']
+
 type WindowBarProps = {
-  onCustom?: () => void
+  onSelect?: (label: string) => void
+  activeDifficulty?: string
 }
 
-// The classic Windows Minesweeper menu bar with the "Game" dropdown. The
-// entries are visual only, except "Custom..." which invokes `onCustom`.
-export const WindowBar = ({ onCustom }: WindowBarProps) => {
+// The classic Windows Minesweeper menu bar with the "Game" dropdown. Selecting
+// an entry invokes `onSelect`; the active difficulty is marked with a ✓.
+export const WindowBar = ({ onSelect, activeDifficulty }: WindowBarProps) => {
   const [gameMenuOpen, setGameMenuOpen] = useState(false)
   const gameMenuRef = useRef<HTMLSpanElement>(null)
 
@@ -48,8 +52,11 @@ export const WindowBar = ({ onCustom }: WindowBarProps) => {
 
   const handleSelect = (label: string) => {
     setGameMenuOpen(false)
-    if (label === 'Custom...') onCustom?.()
+    onSelect?.(label)
   }
+
+  const isChecked = (entry: { label: string; check?: boolean }) =>
+    difficultyLabels.includes(entry.label) ? entry.label === activeDifficulty : !!entry.check
 
   return (
     <div className="menuBar">
@@ -72,7 +79,7 @@ export const WindowBar = ({ onCustom }: WindowBarProps) => {
                   role="menuitem"
                   onClick={() => handleSelect(entry.label)}
                 >
-                  <span className="menuCheck">{entry.check ? '✓' : ''}</span>
+                  <span className="menuCheck">{isChecked(entry) ? '✓' : ''}</span>
                   <span className="menuLabel">{entry.label}</span>
                   <span className="menuShortcut">{entry.shortcut ?? ''}</span>
                 </div>

@@ -3,7 +3,7 @@ import { CustomField } from './CustomField'
 
 describe('CustomField', () => {
   it('renders the Height, Width and Mines fields with defaults', () => {
-    render(<CustomField onClose={vi.fn()} />)
+    render(<CustomField onSubmit={vi.fn()} onClose={vi.fn()} />)
     expect(screen.getByText('Height:')).toBeInTheDocument()
     expect(screen.getByText('Width:')).toBeInTheDocument()
     expect(screen.getByText('Mines:')).toBeInTheDocument()
@@ -13,23 +13,27 @@ describe('CustomField', () => {
     expect(values).toEqual(['8', '8', '10'])
   })
 
-  it('updates each field when edited', () => {
-    render(<CustomField onClose={vi.fn()} />)
+  it('submits the entered dimensions as options when OK is clicked', () => {
+    const onSubmit = vi.fn()
+    render(<CustomField onSubmit={onSubmit} onClose={vi.fn()} />)
     const inputs = document.querySelectorAll<HTMLInputElement>('.customFieldRow input')
     fireEvent.change(inputs[0], { target: { value: '16' } })
     fireEvent.change(inputs[1], { target: { value: '30' } })
     fireEvent.change(inputs[2], { target: { value: '99' } })
-    expect(Array.from(inputs).map((input) => input.value)).toEqual(['16', '30', '99'])
-  })
-
-  it('calls onClose from OK, Cancel and the title-bar close button', () => {
-    const onClose = vi.fn()
-    render(<CustomField onClose={onClose} />)
 
     fireEvent.click(screen.getByText('OK'))
+    expect(onSubmit).toHaveBeenCalledWith({ rows: 16, cells: 30, mines: 99 })
+  })
+
+  it('closes without submitting from Cancel and the title-bar close button', () => {
+    const onSubmit = vi.fn()
+    const onClose = vi.fn()
+    render(<CustomField onSubmit={onSubmit} onClose={onClose} />)
+
     fireEvent.click(screen.getByText('Cancel'))
     fireEvent.click(screen.getByText('✕'))
 
-    expect(onClose).toHaveBeenCalledTimes(3)
+    expect(onClose).toHaveBeenCalledTimes(2)
+    expect(onSubmit).not.toHaveBeenCalled()
   })
 })
