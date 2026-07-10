@@ -2,6 +2,10 @@
   position: relative;
   display: inline-block;
   margin: 4px;
+  /* Stop long-press on mobile from selecting cell text or opening the callout. */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 
   .board {
     display: flex;
@@ -228,6 +232,8 @@
   color: #000;
   font-family: inherit;
   font-size: inherit;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .customFieldButtons {
