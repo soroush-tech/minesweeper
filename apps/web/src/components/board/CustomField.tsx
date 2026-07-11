@@ -7,6 +7,13 @@ type CustomFieldProps = {
   onClose: () => void
 }
 
+const MAX_HEIGHT = 30
+const MAX_WIDTH = 24
+const MIN_MINES = 10
+
+const clamp = (value: string, min: number, max: number) =>
+  Math.min(Math.max(Math.floor(Number(value)) || min, min), max)
+
 // The classic "Custom Field" dialog. OK applies the entered dimensions as a new
 // board; Cancel and the title-bar close button dismiss it without changes.
 export const CustomField = ({ onSubmit, onClose }: CustomFieldProps) => {
@@ -14,8 +21,13 @@ export const CustomField = ({ onSubmit, onClose }: CustomFieldProps) => {
   const [width, setWidth] = useState('8')
   const [mines, setMines] = useState('10')
 
-  const handleOk = () =>
-    onSubmit({ rows: Number(height), cells: Number(width), mines: Number(mines) })
+  // Out-of-range values fall back to the limits: up to 30 rows and 24 columns,
+  // and between 10 mines and one fewer than there are cells.
+  const handleOk = () => {
+    const rows = clamp(height, 1, MAX_HEIGHT)
+    const cells = clamp(width, 1, MAX_WIDTH)
+    onSubmit({ rows, cells, mines: clamp(mines, MIN_MINES, rows * cells - 1) })
+  }
 
   return (
     <Window title="Custom Field" variant="dialog" onClose={onClose}>
