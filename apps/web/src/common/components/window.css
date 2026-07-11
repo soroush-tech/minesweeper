@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   padding: 4px;
-  background-color: #ddd;
+  background-color: var(--body, #ddd);
   /* Classic Windows raised window frame, sampled from the reference: a light
      highlight on the top/left and a dark shadow on the bottom/right. */
   box-shadow:
@@ -19,8 +19,13 @@
   align-self: stretch;
   gap: 6px;
   padding: 3px 4px;
-  background: linear-gradient(90deg, #0a246a, #3a6ea5, #6a8ccb);
-  color: #fff;
+  background: linear-gradient(
+    90deg,
+    var(--title-a, #0a246a),
+    var(--title-b, #3a6ea5),
+    var(--title-c, #6a8ccb)
+  );
+  color: var(--title-text, #fff);
   font-family: 'W95FA', 'pixel-art', sans-serif;
   font-size: 16px;
   -webkit-font-smoothing: none;
@@ -48,8 +53,8 @@
   justify-content: center;
   width: 18px;
   height: 18px;
-  border: 2px outset #fff;
-  background-color: #ddd;
+  border: 2px outset var(--bevel, #fff);
+  background-color: var(--body, #ddd);
   cursor: default;
 }
 

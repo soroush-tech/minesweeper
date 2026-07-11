@@ -10,10 +10,13 @@ interface FlagStore {
   // When on, the mark cycle includes the ❓ question mark; when off it is just
   // flag ⇄ none. Toggled by the "Marks (?)" menu entry.
   marks: boolean
+  // When off, the window renders in grayscale. Toggled by the "Color" entry.
+  color: boolean
   // Marks are namespaced by board id, so each game has its own isolated set.
   boards: Record<string, BoardFlags>
   setMines: (mines: number) => void
   toggleMarks: () => void
+  toggleColor: () => void
   cycleFlag: (boardId: string, key: string) => void
 }
 
@@ -24,9 +27,11 @@ export const flagCount = (flags: BoardFlags = {}): number =>
 export const useFlagStore = create<FlagStore>((set) => ({
   mines: 0,
   marks: true,
+  color: true,
   boards: {},
   setMines: (mines) => set({ mines }),
   toggleMarks: () => set((state) => ({ marks: !state.marks })),
+  toggleColor: () => set((state) => ({ color: !state.color })),
   cycleFlag: (boardId, key) =>
     set((state) => {
       const boardFlags = { ...state.boards[boardId] }

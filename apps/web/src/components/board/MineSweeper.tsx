@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import './minesweeper.css'
 import windowIcon from '../../assets/window-icon.svg'
 import { type Options } from '../../utils/generateMinesweeperGrid'
+import { useFlagStore } from '../../common/store/useFlagStore'
 import { Window } from '../../common/components/Window'
 import { WindowBar } from './WindowBar'
 import { CustomField } from './CustomField'
@@ -17,6 +18,7 @@ const presets: Record<string, Options> = {
 
 export const MineSweeper = () => {
   const queryClient = useQueryClient()
+  const color = useFlagStore((state) => state.color)
   const [options, setOptions] = useState<Options>(presets.Beginner)
   const [difficulty, setDifficulty] = useState('Beginner')
   const [generation, setGeneration] = useState(0)
@@ -46,7 +48,7 @@ export const MineSweeper = () => {
   }
 
   return (
-    <div className="minesweeper">
+    <div className={`minesweeper${color ? '' : ' grayscale'}`}>
       <Window title="Minesweeper" icon={windowIcon}>
         <WindowBar onSelect={handleSelect} activeDifficulty={difficulty} />
         <Board key={generation} options={options} />

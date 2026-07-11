@@ -3,6 +3,7 @@ import { http, HttpResponse } from 'msw'
 import { renderWithProvider } from '../../renderWithProvider'
 import { MineSweeper } from './MineSweeper'
 import { server } from '../../service/mocks/server'
+import { useFlagStore } from '../../common/store/useFlagStore'
 import { type Board as BoardT } from '../../utils/generateMinesweeperGrid'
 
 const makeBoard = (id: string, overrides: Partial<BoardT> = {}): BoardT => ({
@@ -27,6 +28,7 @@ describe('Board', () => {
         return HttpResponse.json(makeBoard(id, id === 'board-1' ? { end: 'now' } : {}))
       }),
     )
+    useFlagStore.setState({ color: true, marks: true })
   })
 
   it('shows the window title bar and menu bar', () => {
@@ -67,6 +69,16 @@ describe('Board', () => {
 
     fireEvent.mouseUp(field)
     expect(screen.getByAltText('smiling face')).toBeInTheDocument()
+  })
+
+  it('renders the window in grayscale when Color is turned off', () => {
+    render(renderWithProvider(MineSweeper))
+    const win = document.querySelector('.minesweeper') as HTMLElement
+    expect(win.classList.contains('grayscale')).toBe(false)
+
+    fireEvent.click(screen.getByText('Game'))
+    fireEvent.click(screen.getByText('Color'))
+    expect(win.classList.contains('grayscale')).toBe(true)
   })
 
   // These select a difficulty, which evicts the shared 'board/new' cache — keep

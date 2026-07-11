@@ -6,7 +6,7 @@ const markCheckFor = (label: string) =>
   screen.getByText(label).closest('.menuDropdownItem')?.querySelector('.menuCheck')?.textContent
 
 describe('WindowBar', () => {
-  beforeEach(() => useFlagStore.setState({ marks: true }))
+  beforeEach(() => useFlagStore.setState({ marks: true, color: true }))
 
   it('keeps the Game dropdown closed by default', () => {
     render(<WindowBar />)
@@ -91,5 +91,19 @@ describe('WindowBar', () => {
 
     fireEvent.click(screen.getByText('Game'))
     expect(markCheckFor('Marks (?)')).toBe('')
+  })
+
+  it('toggles the Color option without firing onSelect', () => {
+    const onSelect = vi.fn()
+    render(<WindowBar onSelect={onSelect} />)
+    fireEvent.click(screen.getByText('Game'))
+    expect(markCheckFor('Color')).toBe('✓')
+
+    fireEvent.click(screen.getByText('Color'))
+    expect(useFlagStore.getState().color).toBe(false)
+    expect(onSelect).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByText('Game'))
+    expect(markCheckFor('Color')).toBe('')
   })
 })

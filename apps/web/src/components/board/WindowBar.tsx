@@ -19,7 +19,7 @@ const gameMenuEntries: GameMenuEntry[] = [
   { label: 'Custom...' },
   null,
   { label: 'Marks (?)' },
-  { label: 'Color', check: true },
+  { label: 'Color' },
   null,
   { label: 'Best Times...' },
   null,
@@ -41,6 +41,8 @@ export const WindowBar = ({ onSelect, activeDifficulty }: WindowBarProps) => {
   const gameMenuRef = useRef<HTMLSpanElement>(null)
   const marks = useFlagStore((state) => state.marks)
   const toggleMarks = useFlagStore((state) => state.toggleMarks)
+  const color = useFlagStore((state) => state.color)
+  const toggleColor = useFlagStore((state) => state.toggleColor)
 
   useEffect(() => {
     if (!gameMenuOpen) return
@@ -55,15 +57,14 @@ export const WindowBar = ({ onSelect, activeDifficulty }: WindowBarProps) => {
 
   const handleSelect = (label: string) => {
     setGameMenuOpen(false)
-    if (label === 'Marks (?)') {
-      toggleMarks()
-      return
-    }
+    if (label === 'Marks (?)') return toggleMarks()
+    if (label === 'Color') return toggleColor()
     onSelect?.(label)
   }
 
   const isChecked = (entry: { label: string; check?: boolean }) => {
     if (entry.label === 'Marks (?)') return marks
+    if (entry.label === 'Color') return color
     if (difficultyLabels.includes(entry.label)) return entry.label === activeDifficulty
     return !!entry.check
   }

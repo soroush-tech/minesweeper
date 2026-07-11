@@ -1,4 +1,32 @@
 .minesweeper {
+  /* --- Color theme (the original palette) --- */
+  --body: #ddd;
+  --cell: #ddd;
+  --bevel: #fff;
+  --text: #000;
+  --title-a: #0a246a;
+  --title-b: #3a6ea5;
+  --title-c: #6a8ccb;
+  --title-text: #fff;
+  --menu-hl-bg: #0a246a;
+  --menu-hl-text: #fff;
+  --sep-dark: #888;
+  --sep-light: #fff;
+  --revealed: #ccc;
+  --revealed-border: #bbb;
+  --explode: #c00;
+  --led-on: #c00;
+  --led-off: #600000;
+  --led-def: #1e262e;
+  --n1: #2f0cdb;
+  --n2: #47731b;
+  --n3: #c71d0a;
+  --n4: #19046c;
+  --n5: #5e0a05;
+  --n6: #487f7f;
+  --n7: #000000;
+  --n8: #6f6f6f;
+
   position: relative;
   display: inline-block;
   margin: 4px;
@@ -18,8 +46,8 @@
     align-self: stretch;
     gap: 4px;
     padding: 2px 4px;
-    background-color: #ddd;
-    color: #000;
+    background-color: var(--body);
+    color: var(--text);
     font-family: 'W95FA', 'pixel-art', sans-serif;
     font-size: 16px;
     -webkit-font-smoothing: none;
@@ -40,7 +68,7 @@
 
   .menuItem:hover,
   .menuItem.active {
-    border: 2px outset #fff;
+    border: 2px outset var(--bevel);
   }
 
   .menuDropdown {
@@ -52,9 +80,9 @@
     z-index: 10;
     min-width: 150px;
     padding: 2px;
-    border: 2px outset #fff;
-    background-color: #ddd;
-    color: #000;
+    border: 2px outset var(--bevel);
+    background-color: var(--body);
+    color: var(--text);
     font-family: 'W95FA', 'pixel-art', sans-serif;
     font-size: 16px;
     -webkit-font-smoothing: none;
@@ -70,8 +98,8 @@
   }
 
   .menuDropdownItem:hover {
-    background-color: #0a246a;
-    color: #fff;
+    background-color: var(--menu-hl-bg);
+    color: var(--menu-hl-text);
   }
 
   .menuCheck {
@@ -85,13 +113,13 @@
   .menuSeparator {
     height: 0;
     margin: 3px 2px;
-    border-top: 1px solid #888;
-    border-bottom: 1px solid #fff;
+    border-top: 1px solid var(--sep-dark);
+    border-bottom: 1px solid var(--sep-light);
   }
 
   .board .header {
-    border: 4px inset #fff;
-    background-color: #ddd;
+    border: 4px inset var(--bevel);
+    background-color: var(--body);
     margin-bottom: 8px;
     padding: 4px;
     display: flex;
@@ -107,7 +135,7 @@
     height: 42px;
     align-items: center;
     justify-content: center;
-    border: 4px outset #fff;
+    border: 4px outset var(--bevel);
     padding: 4px;
   }
 
@@ -125,7 +153,7 @@
 
   .field {
     display: flex;
-    border: 4px inset #fff;
+    border: 4px inset var(--bevel);
     padding: 0;
     flex-direction: column;
     align-items: center;
@@ -141,8 +169,8 @@
     height: 28px;
     font-size: 18px;
     line-height: 30px;
-    border: 4px outset #fff;
-    background-color: #ddd;
+    border: 4px outset var(--bevel);
+    background-color: var(--cell);
     align-items: center;
     justify-content: center;
     font-weight: bold;
@@ -153,8 +181,8 @@
 
   .field .cell.revealed {
     transition: 250ms;
-    background-color: #ccc;
-    border: 2px solid #bbb;
+    background-color: var(--revealed);
+    border: 2px solid var(--revealed-border);
   }
 
   .field .cell img {
@@ -166,34 +194,67 @@
 
   /* Only the mine that was clicked to lose the game — not the ones shown at game over. */
   .field .cell.exploded {
-    background-color: #c00;
+    background-color: var(--explode);
   }
 
   .cell-1 {
-    color: #2f0cdb;
+    color: var(--n1);
   }
   .cell-2 {
-    color: #47731b;
+    color: var(--n2);
   }
   .cell-3 {
-    color: #c71d0a;
+    color: var(--n3);
   }
   .cell-4 {
-    color: #19046c;
+    color: var(--n4);
   }
   .cell-5 {
-    color: #5e0a05;
+    color: var(--n5);
   }
   .cell-6 {
-    color: #487f7f;
+    color: var(--n6);
   }
   .cell-7,
   .cell--1 {
-    color: #000000;
+    color: var(--n7);
   }
   .cell-8 {
-    color: #6f6f6f;
+    color: var(--n8);
   }
+}
+
+/* --- Monochrome theme (Color off) — sampled to match the reference screenshot --- */
+.minesweeper.grayscale {
+  --body: #d0ccc0;
+  --cell: #b8bcb8;
+  --bevel: #f8fcf8;
+  --title-a: #204880;
+  --title-b: #6894c0;
+  --title-c: #a0c8e8;
+  --menu-hl-bg: #383c38;
+  --revealed: #b8bcb8;
+  --revealed-border: #909090;
+  --explode: #808080;
+  --led-on: #f8fcf8;
+  --led-off: #383838;
+  --n1: #000;
+  --n2: #000;
+  --n3: #000;
+  --n4: #000;
+  --n5: #000;
+  --n6: #000;
+  --n7: #000;
+  --n8: #000;
+}
+
+/* Image assets (window icon, smiley face, flags/mines/marks) bake in their own
+   colors, so CSS variables can't reach them — desaturate them for the mono
+   theme to match the reference. */
+.minesweeper.grayscale .titleBar .icon,
+.minesweeper.grayscale .observerFace img,
+.minesweeper.grayscale .field .cell img {
+  filter: grayscale(1);
 }
 
 /* Place the Custom Field dialog floating over the main window, overhanging
@@ -212,7 +273,7 @@
   display: flex;
   gap: 16px;
   padding: 12px;
-  color: #000;
+  color: var(--text);
 }
 
 .customFieldFields {
@@ -232,7 +293,7 @@
 .customFieldRow input {
   width: 48px;
   padding: 2px 4px;
-  border: 2px inset #fff;
+  border: 2px inset var(--bevel);
   background-color: #fff;
   color: #000;
   font-family: inherit;

@@ -3,7 +3,7 @@ import { flagCount, useFlagStore } from './useFlagStore.ts'
 const { getState, setState } = useFlagStore
 const BOARD = 'board-1'
 
-beforeEach(() => setState({ mines: 10, boards: {}, marks: true }))
+beforeEach(() => setState({ mines: 10, boards: {}, marks: true, color: true }))
 
 describe('useFlagStore', () => {
   it('cycles a cell none -> flag -> question -> none', () => {
@@ -58,6 +58,14 @@ describe('useFlagStore', () => {
     expect(getState().marks).toBe(false)
     getState().toggleMarks()
     expect(getState().marks).toBe(true)
+  })
+
+  it('toggleColor flips the color setting', () => {
+    expect(getState().color).toBe(true)
+    getState().toggleColor()
+    expect(getState().color).toBe(false)
+    getState().toggleColor()
+    expect(getState().color).toBe(true)
   })
 
   it('keeps marks isolated per board', () => {
