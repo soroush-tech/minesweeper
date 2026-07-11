@@ -111,6 +111,11 @@
     padding: 4px;
   }
 
+  /* Sink the border in while the reset face is pressed, like a classic button. */
+  .observerFace:active {
+    border-style: inset;
+  }
+
   .observerFace img {
     width: 100%;
     height: 100%;
