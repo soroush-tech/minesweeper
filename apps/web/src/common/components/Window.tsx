@@ -1,5 +1,8 @@
 import { type ReactNode } from 'react'
 import './window.css'
+import minimizeIcon from '../../assets/window-minimize.svg'
+import maximizeIcon from '../../assets/window-maximize.svg'
+import closeIcon from '../../assets/window-close.svg'
 
 type WindowProps = {
   title: string
@@ -22,13 +25,19 @@ export const Window = ({ title, icon, variant = 'app', onClose, children }: Wind
         <span className="windowButtons">
           {variant === 'app' ? (
             <>
-              <span className="windowButton">—</span>
-              <span className="windowButton">🗖</span>
-              <span className="windowButton">✕</span>
+              <span className="windowButton">
+                <img src={minimizeIcon} alt="minimize" />
+              </span>
+              <span className="windowButton disabled">
+                <img src={maximizeIcon} alt="maximize" />
+              </span>
+              <span className="windowButton">
+                <img src={closeIcon} alt="close" />
+              </span>
             </>
           ) : (
             <span className="windowButton" onClick={onClose}>
-              ✕
+              <img src={closeIcon} alt="close" />
             </span>
           )}
         </span>

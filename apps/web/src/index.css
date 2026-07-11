@@ -5,7 +5,7 @@
 
   color-scheme: light dark;
   color: #000;
-  background-color: #242424;
+  background-color: #3a6ea5;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -58,7 +58,7 @@ button {
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: #306ca0;
   }
   a:hover {
     color: #747bff;

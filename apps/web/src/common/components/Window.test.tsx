@@ -21,10 +21,12 @@ describe('Window', () => {
     expect(document.querySelector('.titleBar .icon')).toHaveAttribute('src', '/icon.svg')
   })
 
-  it('shows the three decorative buttons for the app variant', () => {
+  it('shows the minimize, maximize and close buttons for the app variant', () => {
     render(<Window title="Minesweeper">app</Window>)
-    const buttons = document.querySelectorAll('.windowButton')
-    expect(Array.from(buttons).map((b) => b.textContent)).toEqual(['—', '🗖', '✕'])
+    const alts = Array.from(document.querySelectorAll('.windowButton img')).map((img) =>
+      img.getAttribute('alt'),
+    )
+    expect(alts).toEqual(['minimize', 'maximize', 'close'])
   })
 
   it('shows a single close button wired to onClose for the dialog variant', () => {

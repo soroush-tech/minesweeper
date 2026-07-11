@@ -31,7 +31,7 @@ describe('CustomField', () => {
     render(<CustomField onSubmit={onSubmit} onClose={onClose} />)
 
     fireEvent.click(screen.getByText('Cancel'))
-    fireEvent.click(screen.getByText('✕'))
+    fireEvent.click(screen.getByAltText('close'))
 
     expect(onClose).toHaveBeenCalledTimes(2)
     expect(onSubmit).not.toHaveBeenCalled()

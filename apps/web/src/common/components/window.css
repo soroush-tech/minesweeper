@@ -2,8 +2,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 4px outset #fff;
+  padding: 4px;
   background-color: #ddd;
+  /* Classic Windows raised window frame, sampled from the reference: a light
+     highlight on the top/left and a dark shadow on the bottom/right. */
+  box-shadow:
+    inset 1px 1px #d0ccc0,
+    inset 2px 2px #f8fcf8,
+    inset -1px -1px #383c38,
+    inset -2px -2px #787c78;
 }
 
 .window .titleBar {
@@ -17,7 +24,6 @@
   font-family: 'W95FA', 'pixel-art', sans-serif;
   font-size: 16px;
   -webkit-font-smoothing: none;
-  margin: 2px;
 }
 
 .window .titleBar .icon {
@@ -37,8 +43,34 @@
 }
 
 .window .windowButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 18px;
   height: 18px;
+  border: 2px outset #fff;
+  background-color: #ddd;
+  cursor: default;
+}
+
+.window .windowButton img {
+  display: block;
+  width: 11px;
+  height: 11px;
+}
+
+.window .windowButton:active {
+  border-style: inset;
+}
+
+/* Disabled button (e.g. maximize on the fixed-size board window): grayed icon,
+   and it doesn't press in. invert(0.5) turns the black glyph into #808080. */
+.window .windowButton.disabled img {
+  filter: invert(0.5);
+}
+
+.window .windowButton.disabled:active {
+  border-style: outset;
 }
 
 .window.dialog {
