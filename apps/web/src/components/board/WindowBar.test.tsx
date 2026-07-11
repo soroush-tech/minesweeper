@@ -1,7 +1,13 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { WindowBar } from './WindowBar'
+import { useFlagStore } from '../../common/store/useFlagStore'
+
+const markCheckFor = (label: string) =>
+  screen.getByText(label).closest('.menuDropdownItem')?.querySelector('.menuCheck')?.textContent
 
 describe('WindowBar', () => {
+  beforeEach(() => useFlagStore.setState({ marks: true }))
+
   it('keeps the Game dropdown closed by default', () => {
     render(<WindowBar />)
     expect(screen.queryByRole('menu')).not.toBeInTheDocument()
@@ -71,5 +77,19 @@ describe('WindowBar', () => {
     fireEvent.click(screen.getByText('Custom...'))
 
     expect(onSelect).toHaveBeenCalledWith('Custom...')
+  })
+
+  it('toggles the Marks (?) option without firing onSelect', () => {
+    const onSelect = vi.fn()
+    render(<WindowBar onSelect={onSelect} />)
+    fireEvent.click(screen.getByText('Game'))
+    expect(markCheckFor('Marks (?)')).toBe('✓')
+
+    fireEvent.click(screen.getByText('Marks (?)'))
+    expect(useFlagStore.getState().marks).toBe(false)
+    expect(onSelect).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByText('Game'))
+    expect(markCheckFor('Marks (?)')).toBe('')
   })
 })

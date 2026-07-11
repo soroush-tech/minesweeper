@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useFlagStore } from '../../common/store/useFlagStore'
 
 // Entries for the classic Windows Minesweeper "Game" dropdown. These are
 // visual only — `check` renders a leading ✓, `shortcut` right-aligns a hint,
@@ -17,7 +18,7 @@ const gameMenuEntries: GameMenuEntry[] = [
   { label: 'Expert' },
   { label: 'Custom...' },
   null,
-  { label: 'Marks (?)', check: true },
+  { label: 'Marks (?)' },
   { label: 'Color', check: true },
   null,
   { label: 'Best Times...' },
@@ -38,6 +39,8 @@ type WindowBarProps = {
 export const WindowBar = ({ onSelect, activeDifficulty }: WindowBarProps) => {
   const [gameMenuOpen, setGameMenuOpen] = useState(false)
   const gameMenuRef = useRef<HTMLSpanElement>(null)
+  const marks = useFlagStore((state) => state.marks)
+  const toggleMarks = useFlagStore((state) => state.toggleMarks)
 
   useEffect(() => {
     if (!gameMenuOpen) return
@@ -52,11 +55,18 @@ export const WindowBar = ({ onSelect, activeDifficulty }: WindowBarProps) => {
 
   const handleSelect = (label: string) => {
     setGameMenuOpen(false)
+    if (label === 'Marks (?)') {
+      toggleMarks()
+      return
+    }
     onSelect?.(label)
   }
 
-  const isChecked = (entry: { label: string; check?: boolean }) =>
-    difficultyLabels.includes(entry.label) ? entry.label === activeDifficulty : !!entry.check
+  const isChecked = (entry: { label: string; check?: boolean }) => {
+    if (entry.label === 'Marks (?)') return marks
+    if (difficultyLabels.includes(entry.label)) return entry.label === activeDifficulty
+    return !!entry.check
+  }
 
   return (
     <div className="menuBar">
