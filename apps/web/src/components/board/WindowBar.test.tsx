@@ -93,6 +93,54 @@ describe('WindowBar', () => {
     expect(markCheckFor('Marks (?)')).toBe('')
   })
 
+  it('opens the Game dropdown with the G key', () => {
+    render(<WindowBar />)
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+    fireEvent.keyDown(document, { key: 'g' })
+    expect(screen.getByRole('menu')).toBeInTheDocument()
+  })
+
+  it('opens the Help dropdown on click with its entries', () => {
+    const onSelect = vi.fn()
+    render(<WindowBar onSelect={onSelect} />)
+    fireEvent.click(screen.getByText('Help'))
+
+    const labels = screen
+      .getAllByRole('menuitem')
+      .map((item) => item.querySelector('.menuLabel')?.textContent)
+    expect(labels).toEqual(['Help Topics', 'About Minesweeper'])
+    expect(onSelect).not.toHaveBeenCalled()
+  })
+
+  it('fires onSelect for Help Topics and About Minesweeper', () => {
+    const onSelect = vi.fn()
+    render(<WindowBar onSelect={onSelect} />)
+    fireEvent.click(screen.getByText('Help'))
+    fireEvent.click(screen.getByText('Help Topics'))
+    expect(onSelect).toHaveBeenCalledWith('Help Topics')
+
+    fireEvent.click(screen.getByText('Help'))
+    fireEvent.click(screen.getByText('About Minesweeper'))
+    expect(onSelect).toHaveBeenCalledWith('About Minesweeper')
+  })
+
+  it('opens the Help dropdown with the H key', () => {
+    render(<WindowBar />)
+    fireEvent.keyDown(document, { key: 'h' })
+    expect(screen.getByText('Help Topics')).toBeInTheDocument()
+  })
+
+  it('opens only one menu at a time, and F2 closes any open menu', () => {
+    render(<WindowBar />)
+    fireEvent.click(screen.getByText('Game'))
+    fireEvent.keyDown(document, { key: 'h' })
+    expect(screen.queryByText('New')).not.toBeInTheDocument()
+    expect(screen.getByText('Help Topics')).toBeInTheDocument()
+
+    fireEvent.keyDown(document, { key: 'F2' })
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+  })
+
   it('toggles the Color option without firing onSelect', () => {
     const onSelect = vi.fn()
     render(<WindowBar onSelect={onSelect} />)

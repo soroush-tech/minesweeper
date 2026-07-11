@@ -81,6 +81,54 @@ describe('Board', () => {
     expect(win.classList.contains('grayscale')).toBe(true)
   })
 
+  it('opens the Help Topics window from the Help menu', () => {
+    render(renderWithProvider(MineSweeper))
+    expect(screen.queryByText(/Left-click a cell/)).not.toBeInTheDocument()
+    fireEvent.click(screen.getByText('Help'))
+    fireEvent.click(screen.getByText('Help Topics'))
+    expect(screen.getByText(/Left-click a cell/)).toBeInTheDocument()
+  })
+
+  it('opens the About window from the Help menu', () => {
+    render(renderWithProvider(MineSweeper))
+    fireEvent.click(screen.getByText('Help'))
+    fireEvent.click(screen.getByText('About Minesweeper'))
+    expect(screen.getByText(/faithful remake/i)).toBeInTheDocument()
+  })
+
+  it('starts a fresh game from the Game > New menu', async () => {
+    let newRequests = 0
+    server.use(
+      http.get('/board/new', () => {
+        newRequests += 1
+        return HttpResponse.json(makeBoard(`new-${newRequests}`))
+      }),
+    )
+    render(renderWithProvider(MineSweeper))
+    const before = newRequests
+
+    fireEvent.click(screen.getByText('Game'))
+    fireEvent.click(screen.getByText('New'))
+
+    await waitFor(() => expect(newRequests).toBeGreaterThan(before))
+  })
+
+  it('starts a fresh game with the F2 key', async () => {
+    let newRequests = 0
+    server.use(
+      http.get('/board/new', () => {
+        newRequests += 1
+        return HttpResponse.json(makeBoard(`f2-${newRequests}`))
+      }),
+    )
+    render(renderWithProvider(MineSweeper))
+    const before = newRequests
+
+    fireEvent.keyDown(document, { key: 'F2' })
+
+    await waitFor(() => expect(newRequests).toBeGreaterThan(before))
+  })
+
   // These select a difficulty, which evicts the shared 'board/new' cache — keep
   // them last so they don't disturb the board-content tests above.
   const menuCheckFor = (label: string) =>
