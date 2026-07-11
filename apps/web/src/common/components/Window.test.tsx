@@ -41,4 +41,28 @@ describe('Window', () => {
     fireEvent.click(buttons[0])
     expect(onClose).toHaveBeenCalledTimes(1)
   })
+
+  it('moves the window when dragging the title bar', () => {
+    const { container } = render(<Window title="Minesweeper">content</Window>)
+    const win = container.querySelector('.window') as HTMLElement
+    const titleBar = container.querySelector('.titleBar') as HTMLElement
+    expect(win.style.transform).toBe('translate(0px, 0px)')
+
+    fireEvent.mouseDown(titleBar, { clientX: 10, clientY: 10 })
+    fireEvent.mouseMove(document, { clientX: 60, clientY: 40 })
+    fireEvent.mouseUp(document)
+
+    expect(win.style.transform).toBe('translate(50px, 30px)')
+  })
+
+  it('does not start a drag when pressing a title-bar button', () => {
+    const { container } = render(<Window title="Minesweeper">content</Window>)
+    const win = container.querySelector('.window') as HTMLElement
+    const button = container.querySelector('.windowButton') as HTMLElement
+
+    fireEvent.mouseDown(button, { clientX: 10, clientY: 10 })
+    fireEvent.mouseMove(document, { clientX: 60, clientY: 40 })
+
+    expect(win.style.transform).toBe('translate(0px, 0px)')
+  })
 })
