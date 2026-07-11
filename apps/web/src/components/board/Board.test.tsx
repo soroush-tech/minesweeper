@@ -55,6 +55,20 @@ describe('Board', () => {
     await waitFor(() => expect(screen.getByAltText('smiling face')).toBeInTheDocument())
   })
 
+  it('shows the surprised face while the field is pressed', async () => {
+    render(renderWithProvider(MineSweeper))
+    // Start a fresh, in-progress board so the game-over face isn't showing.
+    fireEvent.click(document.querySelector('.observerFace') as HTMLElement)
+    await screen.findByAltText('smiling face')
+
+    const field = document.querySelector('.field') as HTMLElement
+    fireEvent.mouseDown(field)
+    expect(screen.getByAltText('surprised face')).toBeInTheDocument()
+
+    fireEvent.mouseUp(field)
+    expect(screen.getByAltText('smiling face')).toBeInTheDocument()
+  })
+
   // These select a difficulty, which evicts the shared 'board/new' cache — keep
   // them last so they don't disturb the board-content tests above.
   const menuCheckFor = (label: string) =>
