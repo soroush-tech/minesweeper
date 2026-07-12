@@ -7,9 +7,16 @@ export type BoardFlags = Record<string, FlagState>
 
 interface FlagStore {
   mines: number
+  // When on, the mark cycle includes the ❓ question mark; when off it is just
+  // flag ⇄ none. Toggled by the "Marks (?)" menu entry.
+  marks: boolean
+  // When off, the window renders in grayscale. Toggled by the "Color" entry.
+  color: boolean
   // Marks are namespaced by board id, so each game has its own isolated set.
   boards: Record<string, BoardFlags>
   setMines: (mines: number) => void
+  toggleMarks: () => void
+  toggleColor: () => void
   cycleFlag: (boardId: string, key: string) => void
 }
 
@@ -19,23 +26,30 @@ export const flagCount = (flags: BoardFlags = {}): number =>
 
 export const useFlagStore = create<FlagStore>((set) => ({
   mines: 0,
+  marks: true,
+  color: true,
   boards: {},
   setMines: (mines) => set({ mines }),
+  toggleMarks: () => set((state) => ({ marks: !state.marks })),
+  toggleColor: () => set((state) => ({ color: !state.color })),
   cycleFlag: (boardId, key) =>
     set((state) => {
       const boardFlags = { ...state.boards[boardId] }
       const current = boardFlags[key]
       if (current === 'flag') {
-        boardFlags[key] = 'question'
+        // With marks on, flag -> question; otherwise flag -> none.
+        if (state.marks) boardFlags[key] = 'question'
+        else delete boardFlags[key]
       } else if (current === 'question') {
         delete boardFlags[key]
       } else if (flagCount(state.boards[boardId]) < state.mines) {
         // none -> flag, but only while under the mine count
         boardFlags[key] = 'flag'
-      } else {
+      } else if (state.marks) {
         // mine count reached: can't add a flag, mark it as a question instead
         boardFlags[key] = 'question'
       }
+      // marks off and at the mine cap: stays none
       return { boards: { ...state.boards, [boardId]: boardFlags } }
     }),
 }))

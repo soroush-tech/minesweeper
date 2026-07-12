@@ -18,9 +18,9 @@ concurrency:
 
 jobs:
   build:
-    # master-only: a release always comes off the CI-passed master branch, even
+    # main-only: a release always comes off the CI-passed main branch, even
     # though the dispatch UI lets you pick any ref.
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: read

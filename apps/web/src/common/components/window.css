@@ -1,0 +1,84 @@
+.window {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px;
+  background-color: var(--body, #ddd);
+  /* Classic Windows raised window frame, sampled from the reference: a light
+     highlight on the top/left and a dark shadow on the bottom/right. */
+  box-shadow:
+    inset 1px 1px #d0ccc0,
+    inset 2px 2px #f8fcf8,
+    inset -1px -1px #383c38,
+    inset -2px -2px #787c78;
+}
+
+.window .titleBar {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  cursor: move;
+  gap: 6px;
+  padding: 3px 4px;
+  background: linear-gradient(
+    90deg,
+    var(--title-a, #0a246a),
+    var(--title-b, #3a6ea5),
+    var(--title-c, #6a8ccb)
+  );
+  color: var(--title-text, #fff);
+  font-family: 'W95FA', 'pixel-art', sans-serif;
+  font-size: 16px;
+  -webkit-font-smoothing: none;
+}
+
+.window .titleBar .icon {
+  width: 16px;
+  height: 16px;
+  margin: 0 4px;
+}
+
+.window .titleBar .title {
+  flex: 1;
+  text-align: left;
+}
+
+.window .windowButtons {
+  display: flex;
+  gap: 2px;
+}
+
+.window .windowButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 2px outset var(--bevel, #fff);
+  background-color: var(--body, #ddd);
+  cursor: default;
+}
+
+.window .windowButton img {
+  display: block;
+  width: 11px;
+  height: 11px;
+}
+
+.window .windowButton:active {
+  border-style: inset;
+}
+
+/* Disabled button (e.g. maximize on the fixed-size board window): grayed icon,
+   and it doesn't press in. invert(0.5) turns the black glyph into #808080. */
+.window .windowButton.disabled img {
+  filter: invert(0.5);
+}
+
+.window .windowButton.disabled:active {
+  border-style: outset;
+}
+
+.window.dialog {
+  align-items: stretch;
+}

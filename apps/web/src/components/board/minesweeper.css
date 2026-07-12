@@ -1,10 +1,50 @@
+@keyframes menuSlideDown {
+  from {
+    opacity: 0;
+    transform: scaleY(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
 .minesweeper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  /* --- Color theme (the original palette) --- */
+  --body: #ddd;
+  --cell: #ddd;
+  --bevel: #fff;
+  --text: #000;
+  --title-a: #0a246a;
+  --title-b: #3a6ea5;
+  --title-c: #6a8ccb;
+  --title-text: #fff;
+  --menu-hl-bg: #0a246a;
+  --menu-hl-text: #fff;
+  --sep-dark: #888;
+  --sep-light: #fff;
+  --revealed: #ccc;
+  --revealed-border: #bbb;
+  --explode: #c00;
+  --led-on: #c00;
+  --led-off: #600000;
+  --led-def: #1e262e;
+  --n1: #2f0cdb;
+  --n2: #47731b;
+  --n3: #c71d0a;
+  --n4: #19046c;
+  --n5: #5e0a05;
+  --n6: #487f7f;
+  --n7: #000000;
+  --n8: #6f6f6f;
+
+  position: relative;
+  display: inline-block;
   margin: 4px;
-  border: 4px outset #fff;
-  background-color: #ddd;
+  /* Stop long-press on mobile from selecting cell text or opening the callout. */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 
   .board {
     display: flex;
@@ -12,73 +52,92 @@
     flex-direction: column;
   }
 
-  .windowBar {
-    flex-direction: column;
-    width: 100%;
+  .menuBar {
     display: flex;
-    flex-grow: 1;
-  }
-
-  .titleBar {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 4px;
-    background: linear-gradient(90deg, #0a246a, #3a6ea5, #6a8ccb);
-    color: #fff;
+    align-self: stretch;
+    gap: 4px;
+    padding: 2px 4px;
+    background-color: var(--body);
+    color: var(--text);
     font-family: 'W95FA', 'pixel-art', sans-serif;
     font-size: 16px;
     -webkit-font-smoothing: none;
-    margin: 2px;
+    text-align: left;
   }
 
-  .titleBar .icon {
-    width: 16px;
-    height: 16px;
+  .menuItemWrapper {
+    position: relative;
     margin: 0 4px;
   }
 
-  .titleBar .title {
-    flex: 1;
-    text-align: left;
+  .menuItem {
+    display: inline-block;
+    padding: 1px 6px;
+    border: 2px solid transparent;
+    cursor: default;
   }
 
-  .windowButtons {
+  .menuItem:hover,
+  .menuItem.active {
+    border: 2px outset var(--bevel);
+  }
+
+  /* Underline the keyboard accelerator letter (G in Game, H in Help). */
+  .menuItem::first-letter {
+    text-decoration: underline;
+  }
+
+  .menuDropdown {
     display: flex;
-    gap: 2px;
-  }
-
-  .windowButton {
-    width: 18px;
-    height: 18px;
-    border: 2px outset #fff;
-    background-color: #ddd;
-    color: #000;
-    font-size: 11px;
-    font-weight: bold;
-    text-align: center;
-    font-family: 'pixel-art', sans-serif;
-  }
-
-  .menuBar {
-    display: flex;
-    gap: 4px;
-    padding: 2px 4px;
-    background-color: #ddd;
-    color: #000;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 10;
+    min-width: 150px;
+    padding: 2px;
+    border: 2px outset var(--bevel);
+    background-color: var(--body);
+    color: var(--text);
     font-family: 'W95FA', 'pixel-art', sans-serif;
     font-size: 16px;
     -webkit-font-smoothing: none;
-    text-align: left;
+    transform-origin: top;
+    animation: menuSlideDown 120ms ease-out;
   }
 
-  .menuItem {
-    padding: 1px 6px;
+  .menuDropdownItem {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 8px 2px 2px;
+    white-space: nowrap;
+  }
+
+  .menuDropdownItem:hover {
+    background-color: var(--menu-hl-bg);
+    color: var(--menu-hl-text);
+  }
+
+  .menuCheck {
+    text-align: center;
+  }
+
+  .menuShortcut {
+    text-align: right;
+  }
+
+  .menuSeparator {
+    height: 0;
+    margin: 3px 2px;
+    border-top: 1px solid var(--sep-dark);
+    border-bottom: 1px solid var(--sep-light);
   }
 
   .board .header {
-    border: 4px inset #fff;
-    background-color: #ddd;
+    border: 4px inset var(--bevel);
+    background-color: var(--body);
     margin-bottom: 8px;
     padding: 4px;
     display: flex;
@@ -94,8 +153,13 @@
     height: 42px;
     align-items: center;
     justify-content: center;
-    border: 4px outset #fff;
+    border: 4px outset var(--bevel);
     padding: 4px;
+  }
+
+  /* Sink the border in while the reset face is pressed, like a classic button. */
+  .observerFace:active {
+    border-style: inset;
   }
 
   .observerFace img {
@@ -107,7 +171,7 @@
 
   .field {
     display: flex;
-    border: 4px inset #fff;
+    border: 4px inset var(--bevel);
     padding: 0;
     flex-direction: column;
     align-items: center;
@@ -123,8 +187,8 @@
     height: 28px;
     font-size: 18px;
     line-height: 30px;
-    border: 4px outset #fff;
-    background-color: #ddd;
+    border: 4px outset var(--bevel);
+    background-color: var(--cell);
     align-items: center;
     justify-content: center;
     font-weight: bold;
@@ -135,8 +199,8 @@
 
   .field .cell.revealed {
     transition: 250ms;
-    background-color: #ccc;
-    border: 2px solid #bbb;
+    background-color: var(--revealed);
+    border: 2px solid var(--revealed-border);
   }
 
   .field .cell img {
@@ -148,32 +212,143 @@
 
   /* Only the mine that was clicked to lose the game — not the ones shown at game over. */
   .field .cell.exploded {
-    background-color: #c00;
+    background-color: var(--explode);
   }
 
   .cell-1 {
-    color: #2f0cdb;
+    color: var(--n1);
   }
   .cell-2 {
-    color: #47731b;
+    color: var(--n2);
   }
   .cell-3 {
-    color: #c71d0a;
+    color: var(--n3);
   }
   .cell-4 {
-    color: #19046c;
+    color: var(--n4);
   }
   .cell-5 {
-    color: #5e0a05;
+    color: var(--n5);
   }
   .cell-6 {
-    color: #487f7f;
+    color: var(--n6);
   }
   .cell-7,
   .cell--1 {
-    color: #000000;
+    color: var(--n7);
   }
   .cell-8 {
-    color: #6f6f6f;
+    color: var(--n8);
   }
+}
+
+/* --- Monochrome theme (Color off) — sampled to match the reference screenshot --- */
+.minesweeper.grayscale {
+  --body: #d0ccc0;
+  --cell: #b8bcb8;
+  --bevel: #f8fcf8;
+  --title-a: #204880;
+  --title-b: #6894c0;
+  --title-c: #a0c8e8;
+  --menu-hl-bg: #383c38;
+  --revealed: #b8bcb8;
+  --revealed-border: #909090;
+  --explode: #808080;
+  --led-on: #f8fcf8;
+  --led-off: #383838;
+  --n1: #000;
+  --n2: #000;
+  --n3: #000;
+  --n4: #000;
+  --n5: #000;
+  --n6: #000;
+  --n7: #000;
+  --n8: #000;
+}
+
+/* Image assets (window icon, smiley face, flags/mines/marks) bake in their own
+   colors, so CSS variables can't reach them — desaturate them for the mono
+   theme to match the reference. */
+.minesweeper.grayscale .titleBar .icon,
+.minesweeper.grayscale .observerFace img,
+.minesweeper.grayscale .field .cell img {
+  filter: grayscale(1);
+}
+
+/* Place the Custom Field dialog floating over the main window, overhanging
+   its right edge like the classic dialog. */
+.minesweeper .window.dialog {
+  position: absolute;
+  top: 56px;
+  left: 22px;
+  min-width: 280px;
+  font-family: 'W95FA', 'pixel-art', sans-serif;
+  font-size: 16px;
+  -webkit-font-smoothing: none;
+}
+
+.customFieldBody {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+  color: var(--text);
+}
+
+.customFieldFields {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.customFieldRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.customFieldRow input {
+  width: 48px;
+  padding: 2px 4px;
+  border: 2px inset var(--bevel);
+  background-color: #fff;
+  color: #000;
+  font-family: inherit;
+  font-size: inherit;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.customFieldButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.helpBody {
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  max-width: 260px;
+  color: var(--text);
+}
+
+.helpBody ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.helpButtons {
+  justify-content: flex-end;
+}
+
+/* Scoped past `.window .windowButton` so the dialog buttons size correctly. */
+.window.dialog .dialogButton {
+  width: 76px;
+  height: 26px;
+  font-family: 'W95FA', 'pixel-art', sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  cursor: default;
 }
