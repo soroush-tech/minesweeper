@@ -33,6 +33,18 @@ describe('ObserverFace', () => {
     expect(screen.getByAltText('x-eyes face')).toBeInTheDocument()
   })
 
+  it('shows the surprised face while a move is pending', () => {
+    render(<ObserverFace board={makeBoard()} changeBoard={vi.fn()} pending />)
+    expect(screen.getByAltText('surprised face')).toBeInTheDocument()
+  })
+
+  it('shows the game-over face rather than surprised once the game has ended', () => {
+    render(
+      <ObserverFace board={makeBoard({ end: 'now', win: false })} changeBoard={vi.fn()} pending />,
+    )
+    expect(screen.getByAltText('x-eyes face')).toBeInTheDocument()
+  })
+
   it('starts a new board on click', () => {
     const changeBoard = vi.fn().mockResolvedValue(undefined)
     render(<ObserverFace board={makeBoard()} changeBoard={changeBoard} />)
