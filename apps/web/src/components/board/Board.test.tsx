@@ -1,7 +1,9 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderWithProvider } from '../../renderWithProvider'
 import { MineSweeper } from './MineSweeper'
+import { Board } from './Board'
 import { server } from '../../service/mocks/server'
 import { useFlagStore } from '../../common/store/useFlagStore'
 import { type Board as BoardT } from '../../utils/generateMinesweeperGrid'
@@ -127,6 +129,21 @@ describe('Board', () => {
     fireEvent.keyDown(document, { key: 'F2' })
 
     await waitFor(() => expect(newRequests).toBeGreaterThan(before))
+  })
+
+  it('renders a placeholder board when the board request fails', async () => {
+    server.use(http.get('/board/new', () => new HttpResponse(null, { status: 500 })))
+    // Own client: `retry: false` surfaces the failure without the default backoff.
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+
+    const { container } = render(
+      <QueryClientProvider client={queryClient}>
+        <Board options={{ rows: 9, cells: 9, mines: 10 }} />
+      </QueryClientProvider>,
+    )
+
+    await waitFor(() => expect(queryClient.getQueryState(['board', 'new'])?.status).toBe('error'))
+    expect(container.querySelectorAll('.row')).toHaveLength(9)
   })
 
   // These select a difficulty, which evicts the shared 'board/new' cache — keep

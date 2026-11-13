@@ -19,21 +19,21 @@ interface BoardProps {
 
 export const Board = ({ options }: BoardProps) => {
   const { result, changeBoard } = useBoard(options)
-  const { data, isFetched } = result
+  const { data } = result
   // Surprised face: from the moment a cell is pressed (`pressing`) through the
   // in-flight reveal mutation, until the API responds with the new board state.
   const [pressing, setPressing] = useState(false)
   const isRevealing = useIsMutating() > 0
-  const board: BoardT = isFetched
-    ? data
-    : {
-        options,
-        id: 'new',
-        field: generateMinesweeperGrid(options),
-        start: null,
-        end: null,
-        win: false,
-      }
+  // Guard on the data itself, not on `isFetched` — that also turns true when the
+  // request failed, and the board would be undefined.
+  const board: BoardT = data ?? {
+    options,
+    id: 'new',
+    field: generateMinesweeperGrid(options),
+    start: null,
+    end: null,
+    win: false,
+  }
   return (
     <div className="board">
       <div className="header">
